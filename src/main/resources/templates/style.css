@@ -1,0 +1,77 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 300px;
+    margin: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .card-header {
+    padding: 15px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+  }
+  
+  .rogers {
+    background-color: #e74c3c;
+  }
+  
+  .bell {
+    background-color: #3498db;
+  }
+  
+  .freedom {
+    background-color: #2ecc71;
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .plan-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .cost {
+    font-size: 1.5em;
+    color: #27ae60;
+    margin-bottom: 15px;
+  }
+  
+  .data-allowance,
+  .network-coverage,
+  .call-text-allowance {
+    margin-bottom: 10px;
+  }
+  
+  .footer {
+    background-color: #f4f4f4;
+    padding: 10px;
+    text-align: center;
+  }
+  
+
+
+  

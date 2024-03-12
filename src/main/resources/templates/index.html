@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Plans</title>
+  <link rel="stylesheet" href="C:\Users\SHIVAM\Documents\ACC\Demo\Mobile-Plan-Price2\src\main\resources\templates\style.css">
+</head>
+
+<body>
+
+  <div class="card" id="rogers">
+    <div class="card-header rogers">
+      Rogers
+    </div>
+    <div class="card-body">
+      <div class="plan-name">5G Mobile 75GB</div>
+      <div class="cost">$50.00 per mo</div>
+      <div class="data-allowance">Data Allowance: 75 GB</div>
+      <div class="network-coverage">Network Coverage: Access to 5G network</div>
+      <div class="call-text-allowance">Call and Text Allowance: Unlimited Canada-wide talk and text1</div>
+    </div>
+    <div class="footer">
+      Learn more
+    </div>
+  </div>
+
+  <div class="card" id="bell" onclick="redirectToBellAPI()">
+    <div class="card-header bell">
+      Bell
+    </div>
+    <div class="card-body">
+      <div class="plan-name">5G Infinite Essential</div>
+      <div class="cost">$60.00 per mo</div>
+      <div class="data-allowance">Data Allowance: 100 GB</div>
+      <div class="network-coverage">Network Coverage: Access to 5G/5G+ network</div>
+      <div class="call-text-allowance">Call and Text Allowance: Unlimited Canada-wide talk and text1</div>
+    </div>
+    <div class="footer">
+      Learn more
+    </div>
+  </div>
+
+  <div class="card" id="freedom">
+    <div class="card-header freedom">
+      Freedom
+    </div>
+    <div class="card-body">
+      <div class="plan-name">5G Infinite Premium</div>
+      <div class="cost">$75.00 per mo</div>
+      <div class="data-allowance">Data Allowance: Unlimited data</div>
+      <div class="network-coverage">Network Coverage: Access to 5G/5G+ network</div>
+      <div class="call-text-allowance">Call and Text Allowance: Calling, texting and data within Canada, the US, Mexico2 and the Caribbean</div>
+    </div>
+    <div class="footer">
+      Learn more
+    </div>
+  </div>
+
+  <script>
+    function redirectToBellAPI() {
+      window.location.href = '/bell';
+    }
+  </script>
+
+</body>
+
+</html>
