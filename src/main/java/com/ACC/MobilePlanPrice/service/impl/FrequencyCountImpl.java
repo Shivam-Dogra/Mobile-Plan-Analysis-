@@ -1,13 +1,17 @@
-package features;
+package com.ACC.MobilePlanPrice.service.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 
-public class FrequencyCount {
+import org.springframework.stereotype.Service;
 
-    public void countFrequency(String filePath, String words) {
+@Service
+public class FrequencyCountImpl {
+
+    public Map<String, Integer> countFrequency(String words) {
+    	String filePath="MobileWebCrawlDir";
         // The local directory that contains the web pages
         File folder = new File(filePath);
         // To get all files from the directory
@@ -74,5 +78,6 @@ public class FrequencyCount {
                 System.out.println(page + " - frequency: " + frequency);
             }
         }
+		return pageFrequencies;
     }
 }

@@ -1,14 +1,17 @@
-package features;
+package com.ACC.MobilePlanPrice.service.impl;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
-public class searchFrequency {
+public class searchFrequencyImp {
 
+	@Component
     public static class TreeNode {
-        String word;
-        int frequency;
-        TreeNode left, right;
+        public String word;
+        public int frequency;
+        public TreeNode left;
+		public TreeNode right;
 
         public TreeNode() {
             this.word = null;
@@ -62,3 +65,4 @@ public class searchFrequency {
 
 
 }
+
