@@ -10,6 +10,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -106,15 +107,27 @@ public class ControllerClass {
 	        // Get the word completions for the user input
 	        List<String> wordCompletions = WordCompletionImp.spellSuggestions(userInput);
 	        
-	        // Return the word completions as JSON response
-	        Map<String, List<String>> response = new HashMap<>();
-	        response.put("Did you mean?", wordCompletions);
+	        // Check if the list of word completions is empty
+	        if (wordCompletions.isEmpty()) {
+	            // Return a generic response indicating no word completions found
+	            return ResponseEntity.ok().body("No word completions found for the input: " + userInput);
+	        }
 	        
-	        return new ResponseEntity<>(response, HttpStatus.OK);
-	    } catch (Exception e) {
+	        // Retrieve the last word from the list directly
+	        String lastWord = wordCompletions.get(wordCompletions.size() - 1);
+	        
+	        // Return the last word as JSON response
+	        Map<String, String> response = new HashMap<>();
+	        response.put("Last Word", lastWord);
+	        
+	        return ResponseEntity.ok().body(response);
+	    } 
+	    catch (Exception e) {
+	        // Handle other errors
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
 	    }
 	}
+
 
 
 	

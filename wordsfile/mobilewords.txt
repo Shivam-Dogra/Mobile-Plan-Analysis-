@@ -470,3 +470,4 @@ monthly
 rate
 monthly
 pricing
+5G
