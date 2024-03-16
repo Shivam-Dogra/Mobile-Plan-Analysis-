@@ -16,20 +16,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ACC.MobilePlanPrice.model.Index;
 import com.ACC.MobilePlanPrice.model.MobilePlan;
 import com.ACC.MobilePlanPrice.model.WebCrawlerResponse;
 import com.ACC.MobilePlanPrice.service.MobilePlanService;
 import com.ACC.MobilePlanPrice.service.WebCrawlerService;
 import com.ACC.MobilePlanPrice.service.impl.BellMobilePlanServiceImpl;
 import com.ACC.MobilePlanPrice.service.impl.RogersMobilePlanServiceImpl;
+import com.ACC.MobilePlanPrice.service.impl.WebCrawler;
 import com.ACC.MobilePlanPrice.service.impl.WordCompletionImp;
 import com.ACC.MobilePlanPrice.service.impl.searchFrequencyImp;
 import com.ACC.MobilePlanPrice.service.impl.searchFrequencyImp.TreeNode;
 
-import features.WebCrawler;
+
 
 import com.ACC.MobilePlanPrice.service.impl.FreedomMobilePlanServiceImpl;
 import com.ACC.MobilePlanPrice.service.impl.FrequencyCountImpl;
+import com.ACC.MobilePlanPrice.service.impl.InvertedIndexImpl;
 
 @RestController
 @RequestMapping("/mobile-plans")
@@ -38,12 +41,14 @@ public class ControllerClass {
 	
 	private final searchFrequencyImp.TreeNode root;
 	private final searchFrequencyImp searchFrequency;
+	private String dir="MobileWebCrawlDir";
 
 
     @Autowired
     public ControllerClass(searchFrequencyImp.TreeNode root, searchFrequencyImp searchFrequency) {
         this.root = root;
         this.searchFrequency = searchFrequency;
+      
     }
 		
 	@Autowired
@@ -55,14 +60,20 @@ public class ControllerClass {
 	@Autowired
 	private FreedomMobilePlanServiceImpl freedomService;
 	
-	@Autowired
-	private WebCrawlerService webCrawlerService;
+@Autowired
+	private WebCrawler webCrawler;
+	
+	//@Autowired
+	//private WebCrawler webCrawler;
 	
 	@Autowired
 	private FrequencyCountImpl frequencyCounter;
 	
 	@Autowired
 	private WordCompletionImp wordCompletion;
+	
+	@Autowired
+	private InvertedIndexImpl invertedIndex;
 	
 	
 	
@@ -117,12 +128,34 @@ public class ControllerClass {
 	}
 
 
+	@GetMapping("/invertedIndex/{userInput}")
+	public ResponseEntity<Object> invertedIndex(@PathVariable String userInput) {
+		 try {
+		    InvertedIndexImpl invertedIndex = new InvertedIndexImpl();
+		    invertedIndex.buildIndex(dir); // Assuming the directory is "MobileWebCrawlDir"
+		    
+		    List<Index> occurrences = invertedIndex.searchKeyword(userInput);
+		    if (occurrences.isEmpty()) {
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		    } else {
+		        return new ResponseEntity<>(occurrences, HttpStatus.OK);
+		    }
+		 }
+		 
+		 catch (Exception e) {
+		        // Log the exception or handle it as needed
+		        return new ResponseEntity<>("Error in Inverted Indexing!", HttpStatus.INTERNAL_SERVER_ERROR);
+		    }
+	}
+	
+	
 	
 	@GetMapping("/crawl")
 	public ResponseEntity<Object> crawl(@RequestParam String startingUrl) {
 	    try {
-	    	WebCrawler c = new WebCrawler();
-	        Set<String> visitedUrls = c.crawl(startingUrl);
+	    //WebCrawler c = new WebCrawler();
+	    	 Set<String> visitedUrls =webCrawler.crawl(startingUrl);
+	       // Set<String> visitedUrls = c.crawl(startingUrl);
 	        
 	        
 	        // Create the response object with visited URLs and message
