@@ -10,27 +10,29 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ACC.MobilePlanPrice.model.Index;
 import com.ACC.MobilePlanPrice.model.MobilePlan;
 import com.ACC.MobilePlanPrice.model.WebCrawlerResponse;
 import com.ACC.MobilePlanPrice.service.MobilePlanService;
 import com.ACC.MobilePlanPrice.service.WebCrawlerService;
 import com.ACC.MobilePlanPrice.service.impl.BellMobilePlanServiceImpl;
 import com.ACC.MobilePlanPrice.service.impl.RogersMobilePlanServiceImpl;
+import com.ACC.MobilePlanPrice.service.impl.WebCrawler;
 import com.ACC.MobilePlanPrice.service.impl.WordCompletionImp;
 import com.ACC.MobilePlanPrice.service.impl.searchFrequencyImp;
 import com.ACC.MobilePlanPrice.service.impl.searchFrequencyImp.TreeNode;
 
-import features.WebCrawler;
+
 
 import com.ACC.MobilePlanPrice.service.impl.FreedomMobilePlanServiceImpl;
 import com.ACC.MobilePlanPrice.service.impl.FrequencyCountImpl;
+import com.ACC.MobilePlanPrice.service.impl.InvertedIndexImpl;
 
 @RestController
 @RequestMapping("/mobile-plans")
@@ -39,12 +41,14 @@ public class ControllerClass {
 	
 	private final searchFrequencyImp.TreeNode root;
 	private final searchFrequencyImp searchFrequency;
+	private String dir="MobileWebCrawlDir";
 
 
     @Autowired
     public ControllerClass(searchFrequencyImp.TreeNode root, searchFrequencyImp searchFrequency) {
         this.root = root;
         this.searchFrequency = searchFrequency;
+      
     }
 		
 	@Autowired
@@ -56,14 +60,20 @@ public class ControllerClass {
 	@Autowired
 	private FreedomMobilePlanServiceImpl freedomService;
 	
-	@Autowired
-	private WebCrawlerService webCrawlerService;
+@Autowired
+	private WebCrawler webCrawler;
+	
+	//@Autowired
+	//private WebCrawler webCrawler;
 	
 	@Autowired
 	private FrequencyCountImpl frequencyCounter;
 	
 	@Autowired
 	private WordCompletionImp wordCompletion;
+	
+	@Autowired
+	private InvertedIndexImpl invertedIndex;
 	
 	
 	
@@ -107,35 +117,45 @@ public class ControllerClass {
 	        // Get the word completions for the user input
 	        List<String> wordCompletions = WordCompletionImp.spellSuggestions(userInput);
 	        
-	        // Check if the list of word completions is empty
-	        if (wordCompletions.isEmpty()) {
-	            // Return a generic response indicating no word completions found
-	            return ResponseEntity.ok().body("No word completions found for the input: " + userInput);
-	        }
+	        // Return the word completions as JSON response
+	        Map<String, List<String>> response = new HashMap<>();
+	        response.put("Did you mean?", wordCompletions);
 	        
-	        // Retrieve the last word from the list directly
-	        String lastWord = wordCompletions.get(wordCompletions.size() - 1);
-	        
-	        // Return the last word as JSON response
-	        Map<String, String> response = new HashMap<>();
-	        response.put("Last Word", lastWord);
-	        
-	        return ResponseEntity.ok().body(response);
-	    } 
-	    catch (Exception e) {
-	        // Handle other errors
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (Exception e) {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
 	    }
 	}
 
 
-
+	@GetMapping("/invertedIndex/{userInput}")
+	public ResponseEntity<Object> invertedIndex(@PathVariable String userInput) {
+		 try {
+		    InvertedIndexImpl invertedIndex = new InvertedIndexImpl();
+		    invertedIndex.buildIndex(dir); // Assuming the directory is "MobileWebCrawlDir"
+		    
+		    List<Index> occurrences = invertedIndex.searchKeyword(userInput);
+		    if (occurrences.isEmpty()) {
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		    } else {
+		        return new ResponseEntity<>(occurrences, HttpStatus.OK);
+		    }
+		 }
+		 
+		 catch (Exception e) {
+		        // Log the exception or handle it as needed
+		        return new ResponseEntity<>("Error in Inverted Indexing!", HttpStatus.INTERNAL_SERVER_ERROR);
+		    }
+	}
+	
+	
 	
 	@GetMapping("/crawl")
 	public ResponseEntity<Object> crawl(@RequestParam String startingUrl) {
 	    try {
-	    	WebCrawler c = new WebCrawler();
-	        Set<String> visitedUrls = c.crawl(startingUrl);
+	    //WebCrawler c = new WebCrawler();
+	    	 Set<String> visitedUrls =webCrawler.crawl(startingUrl);
+	       // Set<String> visitedUrls = c.crawl(startingUrl);
 	        
 	        
 	        // Create the response object with visited URLs and message
